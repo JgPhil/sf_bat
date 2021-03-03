@@ -14,6 +14,7 @@ function nextTurn() {
                 let fightBtn = document.querySelector("#fight");
                 fightBtn.removeAttribute('onclick');
                 fightBtn.setAttribute('value', 'Fini !');
+                fightBtn.style.opacity = 0.3;
                 document.querySelector("#refresh").removeAttribute("hidden");
             }
         })
@@ -36,6 +37,7 @@ function updateTable(json) {
     let html = `
                 <tr>
                     <th>Nom</th>
+                    <th>Image</th>
                     <th>PV</th>
                     <th>Poison</th>
                 </tr>                
@@ -46,6 +48,7 @@ function updateTable(json) {
         html += `
                 <tr>
                     <td${classTd}>${winner + element.name}</td>
+                    <td><img src="img/${element.name}.png" alt="${element.name}"></td>
                     <td>${element.health}</td>
                     <td>${plague}</td>
                 </tr>
