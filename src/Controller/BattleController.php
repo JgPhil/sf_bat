@@ -61,31 +61,35 @@ class BattleController extends AbstractController
             for ($i = 0; $i < count($playersAlive); $i++) {
                 $warrior = $playersAlive[$i];
                 $this->summary .= $warrior->plague();
-                $playersAlive = $warrior->maybeSuccumbs($playersAlive);
+                // $playersAlive = $warrior->maybeSuccumbs($playersAlive);
                 $this->summary .= !in_array($warrior, $playersAlive) ?
-                    $warrior->getName() . ' a succombé ' : '';
+                    $warrior->getName() . " a succombé \n" : "\n";
                 $method = $warrior->getRandomMethod();
                 $target = $warrior->searchRandomTarget($playersAlive);
-                $initialHealth = $target->getHealth();
+                
+                $beforeHealth = $target->getHealth();
+
                 $warrior->$method($target); ////////////ATTTAAAACCKK
-                $damages = $initialHealth - $target->getHealth();
+
+                $playersAlive = $target->maybeSuccumbs($playersAlive);
+                $damages = $beforeHealth - $target->getHealth();
                 if ($method == 'heal_action') {
                     $this->summary .=
-                        $warrior->getName() . ' s\'est soigné de 3 points de vie';
+                        $warrior->getName() . " s'est soignée de 3 points de vie \n";
                 } else {
                     $this->summary .=
                         $warrior->getName() . ' a attaqué '
-                        . $target->getName() . ' avec ' . $method . ' et lui a infligé '
-                        . $damages . ' dégats ';
-                    $playersAlive = $target->maybeSuccumbs($playersAlive);
+                        . $target->getName() . ' avec ' . preg_replace('/_action/', '', $method)  . ' et lui a infligé '
+                        . $damages . " dégats";
+                    //$playersAlive = $target->maybeSuccumbs($playersAlive);
                     $this->summary .= !in_array($target, $playersAlive) ?
-                        $target->getName() . ' a succombé ' : '';
+                        $target->getName() . "a succombé \n" : "\n";
                 }
             }
+            if (count($playersAlive) == 1) {
+                $this->winner = true;
+            }
         } else {
-            $this->winner = true;
-            $this->summary .= "Le vainqueur est " . $playersAlive[0]->getName()
-                . ' il lui reste ' . $playersAlive[0]->getHealth() . ' PV';
             session_unset();
         }
         $this->session->set('players_alive', $playersAlive);

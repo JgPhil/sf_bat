@@ -2,38 +2,39 @@
 
 {% block body %}
 
-	<header>
+	<header class="center">
 		<h1>Bataille</h1>
-		<div class="center">
-			<input type="button" id="fight" value="Fight" onclick="nextTurn()"></input>
+		<table class="child">
+			<tr>
+				<th>Nom</th>
+				<th>PV</th>
+				<th>Poison</th>
+			</tr>
+
+			<tr>
+				<td>Goblin</td>
+				<td>100</td>
+				<td>no</td>
+			</tr>
+			<tr>
+				<td>Witch</td>
+				<td>50</td>
+				<td>/</td>
+			</tr>
+			<tr>
+				<td>Orc</td>
+				<td>100</td>
+				<td>no</td>
+			</tr>
+
+		</table>
+		<div class="buttons_cont">
+			<input type="button" id="fight" value="Fight" onclick="nextTurn()">
+			<input type="button" id="refresh" value="Rejouer" onclick="actualize()" hidden>
+		</div>
+	</header>
+
+	<div class="container">
+		<div id="summary"></div>
 	</div>
-
-</header>
-
-<div class="container">
-	<table class="child">
-		<tr>
-			<th>Nom</th>
-			<th>PV</th>
-			<th>Poison</th>
-		</tr>
-
-		<tr>
-			<td>Goblin</td>
-			<td>100</td>
-			<td>no</td>
-		</tr>
-		<tr>
-			<td>Witch</td>
-			<td>50</td>
-			<td>/</td>
-		</tr>
-		<tr>
-			<td>Orc</td>
-			<td>100</td>
-			<td>no</td>
-		</tr>
-
-	</table>
-	<div id="summary"></div>
-</div>{% endblock %}
+{% endblock %}

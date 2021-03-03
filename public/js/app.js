@@ -1,26 +1,36 @@
-let turnBtn = document.getElementById('fight');
 
-
+let count = 1;
 function nextTurn() {
     fetch('/next-turn').then(
         response => response.json())
         .then(json => {
             if (!json.winner) {
-                updateContent(json)
+                updateContent(json);
             } else {
-                turnBtn['onclick'] = "";
+                if (count < 2) {
+                    updateContent(json);
+                }
+                count++;
+                let fightBtn = document.querySelector("#fight");
+                fightBtn.removeAttribute('onclick');
+                fightBtn.setAttribute('value', 'Fini !');
+                document.querySelector("#refresh").removeAttribute("hidden");
             }
-
         })
         .catch(error => console.log(error));
 }
 
+function actualize() {
+    location.reload();
+}
+
 function updateContent(json) {
-    updateTable(json.status);
+    updateTable(json);
     addSummaryRow(json.summary);
 }
 
-function updateTable(array) {
+function updateTable(json) {
+    let winner = json.winner == true ? 'Gagnant: ' : '';
     let statusRow = document.querySelector("tbody");
     let html = `
                 <tr>
@@ -30,12 +40,13 @@ function updateTable(array) {
                 </tr>                
                 `;
     statusRow.innerHTML = "";
-    array.forEach(element => {
+    json.status.forEach(element => {
+        let plague = element.name == 'Witch' ? '/' : (element.plague ? 'yes' : 'no');
         html += `
                 <tr>
-                    <td>${element.name}</td>
+                    <td>${winner + element.name}</td>
                     <td>${element.health}</td>
-                    <td>${element.plague ? 'yes' : 'no'}</td>
+                    <td>${plague}</td>
                 </tr>
                 ` ;
     }
