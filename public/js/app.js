@@ -31,6 +31,7 @@ function updateContent(json) {
 
 function updateTable(json) {
     let winner = json.winner == true ? 'Gagnant: ' : '';
+    let classTd = json.winner == true ? ' style="color:green";': '';
     let statusRow = document.querySelector("tbody");
     let html = `
                 <tr>
@@ -44,7 +45,7 @@ function updateTable(json) {
         let plague = element.name == 'Witch' ? '/' : (element.plague ? 'yes' : 'no');
         html += `
                 <tr>
-                    <td>${winner + element.name}</td>
+                    <td${classTd}>${winner + element.name}</td>
                     <td>${element.health}</td>
                     <td>${plague}</td>
                 </tr>
@@ -55,9 +56,7 @@ function updateTable(json) {
 }
 
 function addSummaryRow(str) {
-    let summaryRow = document.querySelector("#summary");
-    let p = document.createElement("p");
-    p.innerText = str;
-    summaryRow.appendChild(p);
+    let summaryRow = document.querySelector("#summary")
+    summaryRow.innerText += str;
 
 }

@@ -37,14 +37,6 @@ class BattleController extends AbstractController
     }
 
     /**
-     * @Route("/status", name="status")
-     */
-    public function getPlayersStatus()
-    {
-        return $this->playersAlive;
-    }
-
-    /**
      * @Route("/next-turn", name="next-turn")
      */
     public function nextTurn()
@@ -57,33 +49,33 @@ class BattleController extends AbstractController
         } else {
             $playersAlive = $this->session->get('players_alive');
         }
-        if (count($playersAlive) > 1) {
-            for ($i = 0; $i < count($playersAlive); $i++) {
-                $warrior = $playersAlive[$i];
+        if (count($playersAlive) > 1) { // Plague after each turn 
+            foreach ($playersAlive as $warrior) {
                 $this->summary .= $warrior->plague();
-                // $playersAlive = $warrior->maybeSuccumbs($playersAlive);
+                $playersAlive = $warrior->maybeSuccumbs($playersAlive);
                 $this->summary .= !in_array($warrior, $playersAlive) ?
-                    $warrior->getName() . " a succombé \n" : "\n";
-                $method = $warrior->getRandomMethod();
-                $target = $warrior->searchRandomTarget($playersAlive);
-                
-                $beforeHealth = $target->getHealth();
+                    $warrior->getName() . " a succombé \n" : "";
+            }
+            if (count($playersAlive) > 1) {
+                foreach ($playersAlive as $warrior) {
+                    $method = $warrior->getRandomMethod();
+                    $target = $warrior->searchRandomTarget($playersAlive);
+                    $beforeHealth = $target->getHealth();
+                    $warrior->$method($target); // Attack
 
-                $warrior->$method($target); ////////////ATTTAAAACCKK
-
-                $playersAlive = $target->maybeSuccumbs($playersAlive);
-                $damages = $beforeHealth - $target->getHealth();
-                if ($method == 'heal_action') {
-                    $this->summary .=
-                        $warrior->getName() . " s'est soignée de 3 points de vie \n";
-                } else {
-                    $this->summary .=
-                        $warrior->getName() . ' a attaqué '
-                        . $target->getName() . ' avec ' . preg_replace('/_action/', '', $method)  . ' et lui a infligé '
-                        . $damages . " dégats";
-                    //$playersAlive = $target->maybeSuccumbs($playersAlive);
-                    $this->summary .= !in_array($target, $playersAlive) ?
-                        $target->getName() . "a succombé \n" : "\n";
+                    $playersAlive = $target->maybeSuccumbs($playersAlive); // removing the deads from the array
+                    $damages = $beforeHealth - $target->getHealth();
+                    if ($method == 'heal_action') {
+                        $this->summary .=
+                            $warrior->getName() . " s'est soignée de 3 points de vie\n";
+                    } else {
+                        $this->summary .=
+                            $warrior->getName() . ' a attaqué '
+                            . $target->getName() . ' avec ' . preg_replace('/_action/', '', $method)
+                            . ' et lui a infligé ' . $damages . " dégats\n";
+                        $this->summary .= !in_array($target, $playersAlive) ?
+                            $target->getName() . " a succombé \n" : "";
+                    }
                 }
             }
             if (count($playersAlive) == 1) {
@@ -92,7 +84,8 @@ class BattleController extends AbstractController
         } else {
             session_unset();
         }
-        $this->session->set('players_alive', $playersAlive);
+        $this->session->set('players_alive', $playersAlive); //actualize the players in session
+        $this->summary .= "------------------------\n";
         // After a turn, data is sent via ajax response to view
         $data = [
             'summary' => $this->summary,

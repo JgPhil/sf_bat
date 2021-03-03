@@ -73,7 +73,7 @@ abstract class Warrior
     {
         if ($this->getPlague()) {
             $this->getDamage(3);
-            return $this->getName() . "est empoisonné et a subi 3 points de dégats\n";
+            return $this->getName() . " est empoisonné et a subi 3 points de dégats\n";
         }
         return false;
     }

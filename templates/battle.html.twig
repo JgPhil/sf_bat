@@ -3,6 +3,7 @@
 {% block body %}
 
 	<header class="center">
+		<input type="button" id="refresh" value="Rejouer" onclick="actualize()" hidden>
 		<h1>Bataille</h1>
 		<table class="child">
 			<tr>
@@ -30,11 +31,10 @@
 		</table>
 		<div class="buttons_cont">
 			<input type="button" id="fight" value="Fight" onclick="nextTurn()">
-			<input type="button" id="refresh" value="Rejouer" onclick="actualize()" hidden>
 		</div>
 	</header>
 
 	<div class="container">
-		<div id="summary"></div>
+		<p id="summary"></p>
 	</div>
 {% endblock %}
